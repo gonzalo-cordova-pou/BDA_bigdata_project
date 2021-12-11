@@ -4,6 +4,10 @@ import pyspark
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 
+import management
+import analysis
+import runtime
+
 HADOOP_HOME = "./resources/hadoop_home"
 JDBC_JAR = "./resources/postgresql-42.2.8.jar"
 PYSPARK_PYTHON = "python3.6"
@@ -26,5 +30,17 @@ if(__name__== "__main__"):
 
 
     sc = pyspark.SparkContext.getOrCreate()
+
+    if(len(sys.argv) < 2):
+        print("Wrong number of parameters, usage: (managment, analysis, runtime)")
+        exit()
+    if(sys.argv[1] == "managment"):
+        management.process(sc)
+    elif(sys.argv[1] == "analysis"):
+        analysis.process(sc)
+    elif(sys.argv[1] == "runtime"):
+        runtime.process(sc)
+    else:
+       print("Wrong exercise number")
 
     #Create and point to your pipelines here
