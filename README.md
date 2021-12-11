@@ -1,2 +1,7 @@
 # BDA_bigdata_project
-# By Miquel Palet & Gonzalo Cordova
+
+## Pipelines
+
+- Management
+- Analysis
+- Runtime Classifier
