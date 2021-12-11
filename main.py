@@ -24,6 +24,7 @@ if(__name__== "__main__"):
         .appName("Training") \
         .getOrCreate()
 
+
     sc = pyspark.SparkContext.getOrCreate()
 
     #Create and point to your pipelines here
