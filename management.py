@@ -4,8 +4,10 @@ from pyspark.sql import SQLContext
 from pyspark.sql import Row
 from pyspark.sql import SparkSession
 
-AIMSusername = "BDAgonzalo.cordova"
-AIMSpassword = "DB060601"
+g_username = "BDAgonzalo.cordova"
+g_password = "DB060601"
+m_username = "BDAmiquel.palet.lopez"
+m_password = "DB070501"
 
 def process(sc):
 	sess = SparkSession(sc)
