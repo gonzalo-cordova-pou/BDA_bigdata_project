@@ -1,9 +1,6 @@
 import pyspark
-from pyspark.sql.types import *
-from pyspark.sql import SQLContext
-from pyspark.sql import Row
+import operator
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import input_file_name
 
 g_username = "gonzalo.cordova"
 g_password = "DB060601"
@@ -22,9 +19,9 @@ def process(sc):
 		.option("password", m_password)
 		.load())
 
-	input = (sc.textFile("./resources/trainingData/*.csv")
+	input = (sc.wholeTextFiles("./resources/trainingData/*.csv")
 		.filter(lambda t: "date" not in t)
-		.map(lambda t: (input_file_name()[0:6],float(t.split(";")[3])))
+		.map(lambda t: ((t[0].split("/")[-1][0:6],t[0].split("/")[-1][7:13]),t[1].split(";")[4].split("\n")[0])) #regex
 		.cache())
 
 	for x in input.collect():
