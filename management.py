@@ -10,13 +10,13 @@ m_password = "DB070501"
 def process(sc):
 	sess = SparkSession(sc)
 
-	AIMS = (sess.read
+	AMOS = (sess.read
 		.format("jdbc")
 		.option("driver","org.postgresql.Driver")
-		.option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/AIMS?sslmode=require")
+		.option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/AMOS?sslmode=require")
 		.option("dbtable", "public.flights")
-		.option("user", m_username)
-		.option("password", m_password)
+		.option("user", g_username)
+		.option("password", g_password)
 		.load())
 
 	input = (sc.wholeTextFiles("./resources/trainingData/*.csv")
@@ -26,3 +26,12 @@ def process(sc):
 
 	for x in input.collect():
 		print(x)
+	
+	count = (AMOS.
+		select("airport")
+		.rdd
+		.map(lambda t: t[0])
+		.distinct()
+		.count())
+
+	print(str(count) + " airports with at least one departure")
