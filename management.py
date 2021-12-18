@@ -3,11 +3,16 @@ import random
 import operator
 from pyspark.sql import SparkSession
 from datetime import datetime,timedelta
+from pyspark.mllib.util import MLUtils
+from pyspark.mllib.regression import LabeledPoint
 
 g_username = "gonzalo.cordova"
 g_password = "DB060601"
 m_username = "miquel.palet.lopez"
 m_password = "DB070501"
+
+def toCSVLine(data):
+  return ','.join(str(d) for d in data)
 
 def process(sc):
 	sess = SparkSession(sc)
@@ -56,5 +61,5 @@ def process(sc):
 		.join(KPIs)
 		.mapValues(lambda t: ((t[1][0],t[1][1],t[1][2],t[0]),round(random.uniform(0,1)))))
 
-	for x in rdd.collect():
-		print(x)
+	d = rdd.map(lambda t: LabeledPoint(t[1][1],[t[0][0],t[0][1],t[1][0][0],t[1][0][1],t[1][0][2],t[1][0][3]]))
+	MLUtils.saveAsLibSVMFile(d, "./resources/fake/")
