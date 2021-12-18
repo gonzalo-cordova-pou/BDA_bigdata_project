@@ -59,11 +59,3 @@ def process(sc):
 	for x in rdd.collect():
 		print(x)
 	
-	count = (AMOS.
-		select("airport")
-		.rdd
-		.map(lambda t: t[0])
-		.distinct()
-		.count())
-
-	print(str(count) + " airports with at least one departure")
