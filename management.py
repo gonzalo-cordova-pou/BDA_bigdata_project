@@ -1,8 +1,8 @@
 import pyspark
+import random
 import operator
 from pyspark.sql import SparkSession
-from datetime import datetime
-from pyspark.sql.functions import to_date
+from datetime import datetime,timedelta
 
 g_username = "gonzalo.cordova"
 g_password = "DB060601"
@@ -39,7 +39,7 @@ def process(sc):
 	OI  = (AMOS
 		.select("aircraftregistration","starttime")
 		.rdd
-		.map(lambda t: ((t[1].strftime('%Y-%m-%d'),t[0]),True))
+		.map(lambda t: (t[1].strftime('%Y-%m-%d'),t[0]),True) # starttime,aircraftregistration,maintenance
 		.sortByKey())
 
 	input = (sc.wholeTextFiles("./resources/trainingData/*.csv")
@@ -54,8 +54,7 @@ def process(sc):
 
 	rdd = (input
 		.join(KPIs)
-		.mapValues(lambda t: (t[1][0],t[1][1],t[1][2],t[0])))
+		.mapValues(lambda t: ((t[1][0],t[1][1],t[1][2],t[0]),round(random.uniform(0,1)))))
 
 	for x in rdd.collect():
 		print(x)
-	

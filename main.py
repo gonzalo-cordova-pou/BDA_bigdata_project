@@ -32,7 +32,7 @@ if(__name__== "__main__"):
     sc = pyspark.SparkContext.getOrCreate()
 
     if(len(sys.argv) < 2):
-        print("Wrong number of parameters, usage: (managment, analysis, runtime)")
+        print("Wrong number of parameters, usage: (management, analysis, runtime)")
         exit()
     if(sys.argv[1] == "management"):
         management.process(sc)
