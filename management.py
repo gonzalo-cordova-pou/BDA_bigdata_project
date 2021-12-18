@@ -2,6 +2,7 @@ import pyspark
 import operator
 from pyspark.sql import SparkSession
 from datetime import datetime
+from pyspark.sql.functions import to_date
 
 g_username = "gonzalo.cordova"
 g_password = "DB060601"
@@ -20,27 +21,42 @@ def process(sc):
 		.option("password", m_password)
 		.load())
 
+	AMOS = (sess.read
+		.format("jdbc")
+		.option("driver","org.postgresql.Driver")
+		.option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/AMOS?sslmode=require")
+		.option("dbtable", "oldinstance.operationinterruption")
+		.option("user", m_username)
+		.option("password", m_password)
+		.load())
+
 	KPIs = (DW
 		.select("aircraftid","timeid","flighthours","flightcycles","delayedminutes")
 		.rdd
-		.map(lambda t: ((t[1].strftime("%m%d%y"),t[0]),(float(t[2]),int(t[3]),int(t[4]))))
+		.map(lambda t: ((t[1].strftime('%Y-%m-%d'),t[0]),(float(t[2]),int(t[3]),int(t[4]))))
+		.sortByKey())
+
+	OI  = (AMOS
+		.select("aircraftregistration","starttime")
+		.rdd
+		.map(lambda t: ((t[1].strftime('%Y-%m-%d'),t[0]),True))
 		.sortByKey())
 
 	input = (sc.wholeTextFiles("./resources/trainingData/*.csv")
-		.map(lambda t: ((t[0].split("/")[-1][0:6],t[0].split("/")[-1][20:26]),list(t[1].split("\n"))))
+		.map(lambda t: ((datetime.strptime(t[0].split("/")[-1][0:6],'%d%m%y').strftime('%Y-%m-%d'),t[0].split("/")[-1][20:26]),list(t[1].split("\n"))))
 		.flatMap(lambda t: [(t[0], value) for value in t[1]])
 		.filter(lambda t: "value" not in t[1])
-		.filter(lambda t: t[1] is not '')
+		.filter(lambda t: t[1] != '')
 		.mapValues(lambda t: (float(t.split(";")[-1]),1))
 		.reduceByKey(lambda t1,t2: (t1[0]+t2[0],t1[1]+t2[1]))
 		.mapValues(lambda t: t[0]/t[1])
 		.sortByKey())
 
-	df = (input
-		.leftOuterJoin(KPIs)
+	rdd = (input
+		.join(KPIs)
 		.mapValues(lambda t: (t[1][0],t[1][1],t[1][2],t[0])))
 
-	for x in df.collect():
+	for x in rdd.collect():
 		print(x)
 	
 	count = (AMOS.
