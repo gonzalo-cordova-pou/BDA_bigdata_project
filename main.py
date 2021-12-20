@@ -32,15 +32,20 @@ if(__name__== "__main__"):
     sc = pyspark.SparkContext.getOrCreate()
 
     if(len(sys.argv) < 2):
-        print("Wrong number of parameters, usage: (management, analysis, runtime)")
+        print("Wrong pipeline, usage: (management, analysis, runtime)")
         exit()
     if(sys.argv[1] == "management"):
+        print("#########  MANAGEMENT  ##########")
         management.process(sc)
     elif(sys.argv[1] == "analysis"):
+        print("#########  ANALYSIS  ##########")
         analysis.process(sc)
     elif(sys.argv[1] == "runtime"):
-        runtime.process(sc)
+        aircraft = sys.argv[2]
+        date = sys.argv[3]
+        print("#########  RUNTIME  ##########")
+        runtime.process(sc, aircraft, date)
     else:
-       print("Wrong exercise number")
+       print("Wrong pipeline name (management, analysis, runtime)")
 
     #Create and point to your pipelines here
