@@ -5,6 +5,9 @@ from pyspark.sql import SparkSession
 from datetime import date,timedelta
 from pyspark.mllib.util import MLUtils
 from pyspark.mllib.regression import LabeledPoint
+from tempfile import NamedTemporaryFile
+from fileinput import input
+from glob import glob
 
 g_username = "gonzalo.cordova"
 g_password = "DB060601"
@@ -19,8 +22,8 @@ def process(sc):
         .option("driver","org.postgresql.Driver")
         .option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/DW?sslmode=require")
         .option("dbtable", "public.aircraftutilization")
-        .option("user", m_username)
-        .option("password", m_password)
+        .option("user", g_username)
+        .option("password", g_password)
         .load())
 
     AMOS = (sess.read
@@ -28,8 +31,8 @@ def process(sc):
         .option("driver","org.postgresql.Driver")
         .option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/AMOS?sslmode=require")
         .option("dbtable", "oldinstance.operationinterruption")
-        .option("user", m_username)
-        .option("password", m_password)
+        .option("user", g_username)
+        .option("password", g_password)
         .load())
 
     KPIs = (DW
@@ -39,10 +42,12 @@ def process(sc):
         .sortByKey())
 
     OI  = (AMOS
-        .select("aircraftregistration","starttime","kind")
+        .select("aircraftregistration","starttime","kind", "subsystem")
         .rdd
-        .map(lambda t: ((t[1].date(),t[0]),t[2]))
-        .filter(lambda t: t[1] in ["Delay","AircraftOnGround","Safety"])
+        .map(lambda t: ((t[1].date(),t[0]),(t[2],t[3])))
+        .filter(lambda t: t[1][0] in ["Delay","AircraftOnGround","Safety"])
+		.filter(lambda t: t[1][1] == '3453')
+		.mapValues(lambda t: t[0])
         .sortByKey())
 
     input = (sc.wholeTextFiles("./resources/trainingData/*.csv")
@@ -67,10 +72,7 @@ def process(sc):
     out = (input
         .join(KPIs)
         .leftOuterJoin(data)
-        .mapValues(lambda t: (t[1], t[1][1] is not None)))
-
-    for x in out.collect():
-        print(x)
-
-	d = rdd.map(lambda t: LabeledPoint(t[1][0],t[1][0][0],t[1][0][1],t[1][0][2],t[1][0][3]]))
-	#MLUtils.saveAsLibSVMFile(d, "./resources/fake/")
+		.mapValues(lambda t: (t[0], t[1] is not None))
+        .map(lambda t: LabeledPoint(t[1][1],[t[1][0][0],t[1][0][1][0],t[1][0][1][1],t[1][0][1][2]])))
+	
+    MLUtils.saveAsLibSVMFile(out, "./gatita/")

@@ -4,10 +4,21 @@ import pyspark
 import random
 import operator
 from pyspark.sql import SparkSession
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta, date
 from pyspark.mllib.regression import LabeledPoint
 import os
 import re
+import pyspark
+import random
+import operator
+from pyspark.sql import SparkSession
+from datetime import date,timedelta
+from pyspark.mllib.util import MLUtils
+from pyspark.mllib.regression import LabeledPoint
+from tempfile import NamedTemporaryFile
+from fileinput import input
+from glob import glob
+
 
 g_username = "gonzalo.cordova"
 g_password = "DB060601"
@@ -16,9 +27,6 @@ m_password = "DB070501"
 
 def process(sc, aircraft, date):
     sess = SparkSession(sc)
-    
-    date = "010615"
-    aircraft = "XY-FFT"
     
     rx = date + "-...-...-....-" + aircraft + ".csv"
     #model = DecisionTreeModel.load(sc, "myDecisionTreeClassificationModel")
@@ -40,26 +48,28 @@ def process(sc, aircraft, date):
 		.load())
     
     KPIs = (DW
-		.select("aircraftid","timeid","flighthours","flightcycles","delayedminutes")
-		.rdd
-        .filter(lambda t: t[0] == aircraft)
-		.map(lambda t: ((t[1].strftime('%Y-%m-%d'),t[0]),(float(t[2]),int(t[3]),int(t[4]))))
-		.sortByKey())
+        .select("aircraftid","timeid","flighthours","flightcycles","delayedminutes")
+        .rdd
+        .map(lambda t: ((t[1],t[0]),(float(t[2]),int(t[3]),int(t[4]))))
+        .sortByKey())
+    
+    print(target_files[0])
     
     CSVfile = (sc.wholeTextFiles("./resources/trainingData/" + target_files[0])
-        .map(lambda t: ((datetime.strptime(t[0].split("/")[-1][0:6],'%d%m%y').strftime('%Y-%m-%d'),t[0].split("/")[-1][20:26]),list(t[1].split("\n"))))
-		.flatMap(lambda t: [(t[0], value) for value in t[1]])
-		.filter(lambda t: "value" not in t[1])
-		.filter(lambda t: t[1] != '')
-		.mapValues(lambda t: (float(t.split(";")[-1]),1))
-		.reduceByKey(lambda t1,t2: (t1[0]+t2[0],t1[1]+t2[1]))
-		.mapValues(lambda t: t[0]/t[1])
-		.sortByKey())
+        .map(lambda t: (t[0],list(t[1].split("\n"))))
+        .flatMap(lambda t: [(t[0], value) for value in t[1]])
+        .filter(lambda t: "value" not in t[1])
+        .filter(lambda t: t[1] != '')
+        .mapValues(lambda t: (float(t.split(";")[-1]),1))
+        .reduceByKey(lambda t1,t2: (t1[0]+t2[0],t1[1]+t2[1]))
+        .mapValues(lambda t: t[0]/t[1])
+        .sortByKey())
+
     
     rdd = (CSVfile
 		.join(KPIs))
     
-    for i in rdd.collect():
+    for i in CSVfile.collect():
         print(i)
 
 
