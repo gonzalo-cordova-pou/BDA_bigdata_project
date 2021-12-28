@@ -11,12 +11,9 @@ import operator
 from pyspark.sql import SparkSession
 from datetime import datetime,timedelta, date
 from pyspark.mllib.regression import LabeledPoint
-import os
 import re
-import pyspark
 import random
 import operator
-from pyspark.sql import SparkSession
 from datetime import date,timedelta
 from pyspark.mllib.util import MLUtils
 from pyspark.mllib.regression import LabeledPoint
@@ -81,5 +78,7 @@ print(target_files[0])
     
 CSVfile = (sc.wholeTextFiles("./resources/trainingData/" + target_files[0]))
     #.map(lambda t: ((date(2000+int(t[0].split("/")[-1][4:6]),int(t[0].split("/")[-1][2:4]),int(t[0].split("/")[-1][0:2])),t[0].split("/")[-1][20:26]),list(t[1].split("\n")))))
+
+
 for i in CSVfile.collect():
     print(i)

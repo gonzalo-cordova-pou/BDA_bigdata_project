@@ -22,8 +22,8 @@ def process(sc):
         .option("driver","org.postgresql.Driver")
         .option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/DW?sslmode=require")
         .option("dbtable", "public.aircraftutilization")
-        .option("user", g_username)
-        .option("password", g_password)
+        .option("user", m_username)
+        .option("password", m_password)
         .load())
 
     AMOS = (sess.read
@@ -31,8 +31,8 @@ def process(sc):
         .option("driver","org.postgresql.Driver")
         .option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/AMOS?sslmode=require")
         .option("dbtable", "oldinstance.operationinterruption")
-        .option("user", g_username)
-        .option("password", g_password)
+        .option("user", m_username)
+        .option("password", m_password)
         .load())
 
     KPIs = (DW
@@ -60,19 +60,11 @@ def process(sc):
         .mapValues(lambda t: t[0]/t[1])
         .sortByKey())
 
-    data = (OI
-        .union(OI.map(lambda t: ((t[0][0] - timedelta(days=1),t[0][1]),t[1])))
-        .union(OI.map(lambda t: ((t[0][0] - timedelta(days=2),t[0][1]),t[1])))
-        .union(OI.map(lambda t: ((t[0][0] - timedelta(days=3),t[0][1]),t[1])))
-        .union(OI.map(lambda t: ((t[0][0] - timedelta(days=4),t[0][1]),t[1])))
-        .union(OI.map(lambda t: ((t[0][0] - timedelta(days=5),t[0][1]),t[1])))
-        .union(OI.map(lambda t: ((t[0][0] - timedelta(days=6),t[0][1]),t[1])))
-        .sortByKey()) # hacer un generador que devuelva 7
-
     out = (input
         .join(KPIs)
-        .leftOuterJoin(data)
+        .leftOuterJoin(OI
+            .flatMap(lambda t: [((t[0][0] - timedelta(days=days),t[0][1]),t[1]) for days in range(8)]))
 		.mapValues(lambda t: (t[0], t[1] is not None))
         .map(lambda t: LabeledPoint(t[1][1],[t[1][0][0],t[1][0][1][0],t[1][0][1][1],t[1][0][1][2]])))
-	
-    MLUtils.saveAsLibSVMFile(out, "./gatita/")
+
+    MLUtils.saveAsLibSVMFile(out, "./LibSVM-files/")
