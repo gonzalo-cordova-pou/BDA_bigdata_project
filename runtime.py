@@ -4,20 +4,15 @@ import pyspark
 import random
 import operator
 from pyspark.sql import SparkSession
-from datetime import datetime,timedelta, date
+from datetime import timedelta, date
 from pyspark.mllib.regression import LabeledPoint
 import os
 import re
-import pyspark
-import random
 import operator
-from pyspark.sql import SparkSession
-from datetime import date,timedelta
-from pyspark.mllib.util import MLUtils
-from pyspark.mllib.regression import LabeledPoint
 from tempfile import NamedTemporaryFile
 from fileinput import input
 from glob import glob
+
 
 
 g_username = "gonzalo.cordova"
@@ -25,11 +20,11 @@ g_password = "DB060601"
 m_username = "miquel.palet.lopez"
 m_password = "DB070501"
 
-def process(sc, aircraft, date):
+def process(sc, aircraft, date_):
     sess = SparkSession(sc)
     
-    rx = date + "-...-...-....-" + aircraft + ".csv"
-    #model = DecisionTreeModel.load(sc, "myDecisionTreeClassificationModel")
+    rx = date_ + "-...-...-....-" + aircraft + ".csv"
+    model = DecisionTreeModel.load(sc, "myDecisionTreeClassificationModel")
     target_files = []
 
     for root, dirs, files in os.walk("./resources/trainingData/"):
@@ -53,8 +48,6 @@ def process(sc, aircraft, date):
         .map(lambda t: ((t[1],t[0]),(float(t[2]),int(t[3]),int(t[4]))))
         .sortByKey())
     
-    print(target_files[0])
-    
     CSVfile = (sc.wholeTextFiles("./resources/trainingData/" + target_files[0])
         .map(lambda t: ((date(2000+int(t[0].split("/")[-1][4:6]),int(t[0].split("/")[-1][2:4]),int(t[0].split("/")[-1][0:2])),t[0].split("/")[-1][20:26]),list(t[1].split("\n"))))
         .flatMap(lambda t: [(t[0], value) for value in t[1]])
@@ -69,22 +62,17 @@ def process(sc, aircraft, date):
     rdd = (CSVfile
 		.join(KPIs))
     
-    for i in rdd.collect():
-        print(i)
+    t =  rdd.collect()[0]
 
-
-    # PARAMETERS FOR model.predict
-    #  ---------------------------------------
-    #    X  ->  {array-like, sparse matrix} of shape (n_samples, n_features)
-    #              The input samples. Internally, it will be converted to dtype=np.float32 and if a sparse matrix is provided to a sparse csr_matrix.
-    # check_input ->  bool, default=True
-    #        Allow to bypass several input checking. Don’t use this parameter unless you know what you do.
-
-    # Returns
-    #    y  ->  array-like of shape (n_samples,) or (n_samples, n_outputs)
-    #              The predicted classes, or the predict values.
-
-    # Evaluate model on test instances and compute test error
-
-
-    #predictions = model.predict(inputData.map(lambda x: x.features))
+    sample = [t[1][0],t[1][1][0],t[1][1][1],t[1][1][2]]
+    print("\n \n")
+    print("Sample:  ", sample)
+    prediction = model.predict(sample)
+    if (prediction == 0):
+        print("predicted result:   NO MAINTENANCE")
+        print("\n \n")
+        print("**Miquel Palet and Gonzalo Cordova are not responsible for the problems (or even deaths) that the bad perforance of this model may cause**")
+    else:
+        print("predicted result: MAINTENANCE")
+        print("\n \n")
+        print("**Miquel Palet and Gonzalo Cordova are not responsible for the problems (or even deaths) that the bad perforance of this model may cause**")

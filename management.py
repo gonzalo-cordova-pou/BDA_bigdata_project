@@ -59,6 +59,8 @@ def process(sc):
         .reduceByKey(lambda t1,t2: (t1[0]+t2[0],t1[1]+t2[1]))
         .mapValues(lambda t: t[0]/t[1])
         .sortByKey())
+    
+    print(input.collect())
 
     out = (input
         .join(KPIs)
