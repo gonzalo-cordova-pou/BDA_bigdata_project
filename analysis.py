@@ -10,7 +10,7 @@ from pyspark.mllib.regression import LabeledPoint
 def process(sc):
     sess = SparkSession(sc)
     # Load and parse the data file into an RDD of LabeledPoint.
-    data = MLUtils.loadLibSVMFile(sc, './gatita/')
+    data = MLUtils.loadLibSVMFile(sc, './libsvm_files/')
     (trainingData, testData) = data.randomSplit([0.7, 0.3])
     # Split the data into training and test sets (30% held out for testing)
 

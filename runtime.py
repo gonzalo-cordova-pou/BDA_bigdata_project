@@ -56,7 +56,7 @@ def process(sc, aircraft, date):
     print(target_files[0])
     
     CSVfile = (sc.wholeTextFiles("./resources/trainingData/" + target_files[0])
-        .map(lambda t: (t[0],list(t[1].split("\n"))))
+        .map(lambda t: ((date(2000+int(t[0].split("/")[-1][4:6]),int(t[0].split("/")[-1][2:4]),int(t[0].split("/")[-1][0:2])),t[0].split("/")[-1][20:26]),list(t[1].split("\n"))))
         .flatMap(lambda t: [(t[0], value) for value in t[1]])
         .filter(lambda t: "value" not in t[1])
         .filter(lambda t: t[1] != '')
@@ -69,7 +69,7 @@ def process(sc, aircraft, date):
     rdd = (CSVfile
 		.join(KPIs))
     
-    for i in CSVfile.collect():
+    for i in rdd.collect():
         print(i)
 
 
