@@ -1,4 +1,6 @@
 from utils import *
+
+
 #------------------ STARTING SPARK ------------------#
 
 HADOOP_HOME = "./resources/hadoop_home"
@@ -24,25 +26,20 @@ if(__name__== "__main__"):
 
     sc = pyspark.SparkContext.getOrCreate()
 
-    #----------------------------------------------#
-
-
-    #------------------ USER INTERFACE (asking for parameters) ------------------#
-
-
-    argument = input("What pipeline do you want to execute? (management, analysis or runtime)")
+    argument = input("\nWhat pipeline do you want to execute? (management, analysis or runtime)\n")
     
 
     if(argument == "management"):
         print("\n#########  STARTING MANAGEMENT PIPELINE ##########")
         management.process(sc)
+        print("\nSUCCESS! Clean data created in 'LibSVM-files' directory")
     elif(argument == "analysis"):
         print("\n#########  STARTING ANALYSIS PIPELINE ##########")
         analysis.process(sc)
     elif(argument == "runtime"):
         print("\n######### STARTING RUNTIME PIPELINE ##########")
         aircraft = input("Enter an aircraft:")
-        date_ = input("Enter an date (format: ddmmyy):")
+        date_ = input("Enter a date (format: ddmmyy):")
         runtime.process(sc, aircraft, date_)
     else:
        print("Wrong pipeline. Options: management, analysis, runtime")

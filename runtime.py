@@ -1,3 +1,5 @@
+from utils import *
+
 """
 RUNTIME PIPELINE
 
@@ -17,40 +19,17 @@ def process(sc, aircraft, date_):
     sess = SparkSession(sc)
 
     # Load the Decision Tree Model (created in the analysis pipeline)
-    model = DecisionTreeModel.load(sc, "myDecisionTreeClassificationModel")
-
-    # Load the DW
-    DW = (sess.read
-		.format("jdbc")
-		.option("driver","org.postgresql.Driver")
-		.option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/DW?sslmode=require")
-		.option("dbtable", "public.aircraftutilization")
-		.option("user", g_username)
-		.option("password", g_password)
-		.load())
+    model = utils.DecisionTreeModel.load(sc, "myDecisionTreeClassificationModel")
     
     # Extract and process KPIs
-    KPIs = (DW
-        .select("aircraftid","timeid","flighthours","flightcycles","delayedminutes")
-        .rdd
-        .map(lambda t: ((t[1],t[0]),(float(t[2]),int(t[3]),int(t[4]))))
-        .sortByKey())
+    KPIs = utils.read_kpis(sess)
     
     # Get the csv files (sensor data) matching the aircraft and date
-    target_files = get_files(aircraft, date_)
+    target_files = utils.get_files(aircraft, date_)
     
     # Get the sensor data for the aircraft
-    CSVfile = (sc.wholeTextFiles("./resources/trainingData/" + target_files[0])
-        .map(lambda t: ((date(2000+int(t[0].split("/")[-1][4:6]),int(t[0].split("/")[-1][2:4]),int(t[0].split("/")[-1][0:2])),t[0].split("/")[-1][20:26]),list(t[1].split("\n"))))
-        .flatMap(lambda t: [(t[0], value) for value in t[1]])
-        .filter(lambda t: "value" not in t[1])
-        .filter(lambda t: t[1] != '')
-        .mapValues(lambda t: (float(t.split(";")[-1]),1))
-        .reduceByKey(lambda t1,t2: (t1[0]+t2[0],t1[1]+t2[1]))
-        .mapValues(lambda t: t[0]/t[1])
-        .sortByKey())
+    CSVfile = utils.extract_csv(sc, "./resources/trainingData/" + target_files[0])
 
-    # Join sensor data and KPIs
     rdd = (CSVfile
 		.join(KPIs))
     

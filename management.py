@@ -1,3 +1,5 @@
+from utils import *
+
 """
 MANAGEMENT PIPELINE
 
@@ -15,13 +17,13 @@ def process(sc):
 
     sess = SparkSession(sc)
 
-    KPIs = read_kpis(sess)
+    KPIs = utils.read_kpis(sess)
 
-    events  = add_rows(read_events(sess))
+    events  = utils.add_rows(utils.read_events(sess))
 
     # ------------- 1. READ CSV FILES -------------
 
-    CSVfiles = extract_csv(sc, "./resources/trainingData/*.csv")
+    CSVfiles = utils.extract_csv(sc, "./resources/trainingData/*.csv")
 
 
     output = (CSVfiles
@@ -39,7 +41,12 @@ def process(sc):
     # ------------- 4. FORMAT AND STORE DATA -------------
 
         # Format data with LibSVM format (label index1:value1 index2:value2 ...)
-        .map(lambda t: LabeledPoint(t[1][1],[t[1][0][0],t[1][0][1][0],
+        .map(lambda t: utils.LabeledPoint(t[1][1],[t[1][0][0],t[1][0][1][0],
                                              t[1][0][1][1],t[1][0][1][2]])))
 
-    MLUtils.saveAsLibSVMFile(output, "./LibSVM-files/")
+    # Delete 'LibSVM-files' folder if exists
+    if os.path.exists('./LibSVM-files/'):
+        utils.shutil.rmtree('./LibSVM-files/')
+    
+    utils.MLUtils.saveAsLibSVMFile(output, "./LibSVM-files/")
+    print()

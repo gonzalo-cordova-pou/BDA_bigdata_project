@@ -1,3 +1,5 @@
+from utils import *
+
 """
 ANALYSIS PIPELINE
 
@@ -18,7 +20,7 @@ def process(sc):
     # ------------- 1. CREATE AND SPLIT DATASETS -------------
 
     # Load and parse the data file into an RDD of LabeledPoint.
-    data = MLUtils.loadLibSVMFile(sc, './LibSVM-files/')
+    data = utils.MLUtils.loadLibSVMFile(sc, './LibSVM-files/')
 
     # Split the data into training and test sets (30% held out for testing)
     (trainingData, testData) = data.randomSplit([0.7, 0.3])
@@ -27,7 +29,7 @@ def process(sc):
     # ------------- 2. TRAIN AND TEST MODEL -------------
 
     # Train a DecisionTree model
-    model = DecisionTree.trainClassifier(trainingData, numClasses=2, categoricalFeaturesInfo={}, impurity='gini', maxDepth=5, maxBins=32)
+    model = utils.DecisionTree.trainClassifier(trainingData, numClasses=2, categoricalFeaturesInfo={}, impurity='gini', maxDepth=5, maxBins=32)
 
     # Evaluate model on test instances
     predictions = model.predict(testData.map(lambda x: x.features))
@@ -54,12 +56,16 @@ def process(sc):
     print('Test Accuracy = ' + str(round(testAcc, 2)))
     print('Recall = ' + str(round(recall,2)))
     print("\n")
-    print('Learned classification tree model:')
-    print(model.toDebugString())
+    #print('Learned classification tree model:')
+    #print(model.toDebugString())
+    print("\n SUCCESS! You have now a Decision Tree in your computer")
 
 
 
     # ------------- 3. STORE VALIDATED MODEL -------------
 
-    # Save model
+    # Delete Model folder if exists 
+    if os.path.exists('./myDecisionTreeClassificationModel/'):
+        utils.shutil.rmtree('./myDecisionTreeClassificationModel/')
+
     model.save(sc, "myDecisionTreeClassificationModel")

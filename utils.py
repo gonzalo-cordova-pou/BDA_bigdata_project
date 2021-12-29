@@ -14,11 +14,11 @@ from datetime import date,timedelta
 from pyspark.mllib.util import MLUtils
 from pyspark.mllib.regression import LabeledPoint
 from tempfile import NamedTemporaryFile
-from fileinput import input
 from glob import glob
 from pyspark.mllib.tree import DecisionTree, DecisionTreeModel
 import re
 from tempfile import NamedTemporaryFile
+import shutil
 #---------------------------------------------#
 
 #----- USER CREDENTIALS FOR FIB POSTGRESQL ---#
