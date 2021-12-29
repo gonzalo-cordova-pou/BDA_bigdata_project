@@ -1,12 +1,6 @@
-import os
-import sys
-import pyspark
-from pyspark import SparkConf
-from pyspark.sql import SparkSession
+import utils
 
-import management
-import analysis
-import runtime
+#------------------ STARTING SPARK ------------------#
 
 HADOOP_HOME = "./resources/hadoop_home"
 JDBC_JAR = "./resources/postgresql-42.2.8.jar"
@@ -31,21 +25,31 @@ if(__name__== "__main__"):
 
     sc = pyspark.SparkContext.getOrCreate()
 
-    if(len(sys.argv) < 2):
-        print("Wrong pipeline, usage: (management, analysis, runtime)")
-        exit()
-    if(sys.argv[1] == "management"):
-        print("#########  MANAGEMENT  ##########")
+    #----------------------------------------------#
+
+
+    #------------------ USER INTERFACE (asking for parameters) ------------------#
+
+
+    argument = input("What pipeline do you want to execute? (management, analysis or runtime)")
+    while (argument != "runtime" and argument != "runtime" and argument != "runtime"):
+        print("Wrong pipeline. Options: management, analysis, runtime")
+        argument = input("What pipeline do you want to execute? (manegement, analysis or runtime)")
+
+    if(argument == "management"):
+        print("\n#########  STARTING MANAGEMENT PIPELINE ##########")
         management.process(sc)
-    elif(sys.argv[1] == "analysis"):
-        print("#########  ANALYSIS  ##########")
+    elif(argument == "analysis"):
+        print("\n#########  STARTING ANALYSIS PIPELINE ##########")
         analysis.process(sc)
-    elif(sys.argv[1] == "runtime"):
-        aircraft = sys.argv[2]
-        date = sys.argv[3]
-        print("#########  RUNTIME  ##########")
-        runtime.process(sc, aircraft, date)
+    elif(argument == "runtime"):
+        aircraft = 
+        date = 
+        print("\n######### STARTING RUNTIME PIPELINE ##########")
+        aircraft = input("Enter an aircraft:")
+        date_ = = input("Enter an date (format: ddmmyy):")
+        runtime.process(sc, aircraft, date_)
     else:
        print("Wrong pipeline name (management, analysis, runtime)")
 
-    #Create and point to your pipelines here
+#---------------------------------------------------------------------------------#

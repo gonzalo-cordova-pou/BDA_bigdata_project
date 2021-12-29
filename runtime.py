@@ -7,48 +7,6 @@ Steps:
 
 """
 
-from pyspark.mllib.tree import DecisionTree, DecisionTreeModel
-from pyspark.mllib.util import MLUtils
-import pyspark
-import operator
-from pyspark.sql import SparkSession
-from datetime import timedelta, date
-from pyspark.mllib.regression import LabeledPoint
-import os
-import re
-import operator
-from tempfile import NamedTemporaryFile
-from fileinput import input
-from glob import glob
-
-
-# User and password for DBs
-g_username = "gonzalo.cordova"
-g_password = "DB060601"
-m_username = "miquel.palet.lopez"
-m_password = "DB070501"
-
-
-# ------------- FUNCTIONS -------------
-def get_files(aircraft, date_):
-    """
-    Returns a list with the file names of files matching the aircraft
-    and date passed as parameters
-    """
-    
-    target_files = []
-    expression = date_ + "-...-...-....-" + aircraft + ".csv"
-
-    for root, dirs, files in os.walk("./resources/trainingData/"):
-        for file in files:
-            res = re.match(expression, file)
-            if res:
-                target_files.append(file)
-    
-    return target_files
-# ---------------------------------------
-
-
 
 def process(sc, aircraft, date_):
 

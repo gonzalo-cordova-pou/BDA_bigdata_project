@@ -1,4 +1,6 @@
 """
+ANALYSIS PIPELINE
+
 Steps:
         1. Create and split datasets
         2. Train and test the model
@@ -9,11 +11,6 @@ Notes:
     Management pipeline will create a directory with libsvm files which will be loaded in this pipeline.
 """
 
-import pyspark
-import operator
-from pyspark.mllib.tree import DecisionTree, DecisionTreeModel
-from pyspark.mllib.util import MLUtils
-from pyspark.sql import SparkSession
 
 def process(sc):
     sess = SparkSession(sc)
