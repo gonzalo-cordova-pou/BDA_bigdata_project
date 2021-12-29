@@ -49,9 +49,7 @@ def process(sc, aircraft, date_):
     print("Sample:  ", sample)
     if (prediction == 0):
         print("predicted result:   NO MAINTENANCE")
-        print("\n \n")
-        print("**Miquel Palet and Gonzalo Cordova are not responsible for the problems (or even deaths) that the bad perforance of this model may cause**")
     else:
         print("predicted result: MAINTENANCE")
-        print("\n \n")
-        print("**Miquel Palet and Gonzalo Cordova are not responsible for the problems (or even deaths) that the bad perforance of this model may cause**")
+    print("\n \n")
+    print("**Miquel Palet and Gonzalo Cordova are not responsible for the problems (or even deaths) that the bad perforance of this model may cause**")
