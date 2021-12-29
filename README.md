@@ -1,8 +1,13 @@
-# BDA_bigdata_project
+# Project: Big Data (Predictive Analysis)
 
-## Pipelines
+## Authors
+- Miquel Palet López
+- Gonzalo Córdova Pou
 
-- Management
-- Analysis
-- Runtime Classifier
+## Files
+- _main.py_
+- _utils.py_
+- _mangement.py_
+- _analysis.py_
+- _runtime.py_
  
