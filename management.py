@@ -21,7 +21,7 @@ def process(sc):
 
     # ------------- 1. READ CSV FILES -------------
 
-    CSVfiles = extract_csv("./resources/trainingData/*.csv")
+    CSVfiles = extract_csv(sc, "./resources/trainingData/*.csv")
 
 
     output = (CSVfiles

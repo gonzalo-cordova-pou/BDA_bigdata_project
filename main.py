@@ -1,5 +1,4 @@
-import utils
-
+from utils import *
 #------------------ STARTING SPARK ------------------#
 
 HADOOP_HOME = "./resources/hadoop_home"
@@ -32,9 +31,7 @@ if(__name__== "__main__"):
 
 
     argument = input("What pipeline do you want to execute? (management, analysis or runtime)")
-    while (argument != "runtime" and argument != "runtime" and argument != "runtime"):
-        print("Wrong pipeline. Options: management, analysis, runtime")
-        argument = input("What pipeline do you want to execute? (manegement, analysis or runtime)")
+    
 
     if(argument == "management"):
         print("\n#########  STARTING MANAGEMENT PIPELINE ##########")
@@ -43,13 +40,12 @@ if(__name__== "__main__"):
         print("\n#########  STARTING ANALYSIS PIPELINE ##########")
         analysis.process(sc)
     elif(argument == "runtime"):
-        aircraft = 
-        date = 
         print("\n######### STARTING RUNTIME PIPELINE ##########")
         aircraft = input("Enter an aircraft:")
-        date_ = = input("Enter an date (format: ddmmyy):")
+        date_ = input("Enter an date (format: ddmmyy):")
         runtime.process(sc, aircraft, date_)
     else:
-       print("Wrong pipeline name (management, analysis, runtime)")
+       print("Wrong pipeline. Options: management, analysis, runtime")
+       exit()
 
 #---------------------------------------------------------------------------------#

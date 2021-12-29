@@ -79,7 +79,7 @@ def read_operationinterruption(session):
     Returns operation inerruption table from the AMOS database.
     """
 
-    return (sess.read
+    return (session.read
         .format("jdbc")
         .option("driver","org.postgresql.Driver")
         .option("url", "jdbc:postgresql://postgresfib.fib.upc.edu:6433/AMOS?sslmode=require")
@@ -94,7 +94,7 @@ def read_events(session):
     the aircraft navigation subsystem as RDD.
     """
 
-    return = (read_operationinterruption(session)
+    return  (read_operationinterruption(session)
     .select("aircraftregistration","starttime","kind","subsystem")
     .rdd
     .map(lambda t: ((t[1].date(),t[0]),(t[2],t[3])))
@@ -103,7 +103,7 @@ def read_events(session):
 	.mapValues(lambda t: t[0])
     .sortByKey())
 
-def extract_csv(path):
+def extract_csv(sc, path):
     """
     Returns average sensor measurements for aircraft and day as RDD.
     """
