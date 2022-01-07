@@ -22,7 +22,7 @@ def process(sc, aircraft, date_):
     model = utils.DecisionTreeModel.load(sc, "myDecisionTreeClassificationModel")
     
     # Extract and process KPIs
-    KPIs = utils.read_kpis(sess)
+    KPIs = utils.read_kpis(sess, aircraft)
     
     # Get the csv files (sensor data) matching the aircraft and date
     target_files = utils.get_files(aircraft, date_)

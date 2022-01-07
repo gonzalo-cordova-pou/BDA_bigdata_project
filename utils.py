@@ -63,16 +63,19 @@ def read_aircraftutilization(session):
         .option("password", m_password)
         .load())
 
-def read_kpis(session):
+def read_kpis(session, aircraft):
     """
     Returns FH, FC and DM KPIs for aircraft and day as RDD.
     """
 
-    return (read_aircraftutilization(session)
+    read = (read_aircraftutilization(session)
         .select("aircraftid","timeid","flighthours","flightcycles","delayedminutes")
-        .rdd
-        .map(lambda t: ((t[1],t[0]),(float(t[2]),int(t[3]),int(t[4]))))
-        .sortByKey())
+        .rdd)
+    
+    if (aircraft != "x"):
+        read = read.filter(lambda t: t[0] == aircraft)
+    
+    return read.map(lambda t: ((t[1],t[0]),(float(t[2]),int(t[3]),int(t[4])))).sortByKey()
 
 def read_operationinterruption(session):
     """

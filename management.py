@@ -17,7 +17,7 @@ def process(sc):
 
     sess = SparkSession(sc)
 
-    KPIs = utils.read_kpis(sess)
+    KPIs = utils.read_kpis(sess, "x")
 
     events  = utils.add_rows(utils.read_events(sess))
 
