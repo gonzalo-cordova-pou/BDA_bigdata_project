@@ -1,5 +1,7 @@
 # Project: Big Data (Predictive Analysis)
 
+This is a university project for Advanced Databases. We use PySpark (RDD structure) to create different pipelines that read from PostgreSQL DB and CSV files to create a Decision Tree Classifier.
+
 ## Authors
 * **Miquel Palet López**
 * **Gonzalo Córdova Pou**
