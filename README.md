@@ -12,18 +12,7 @@
 - _runtime.py_: Runtime pipeline. Execute _main.py_ and later select option 'management'.
 
 ## Sketches
-  - **Management Pipeline Sketch:**
-          <br> Relleno de prueba
-          <br> Relleno de prueba
-          <br> Relleno de prueba
-  - **Analysis Pipeline Sketch:**
-          <br> Relleno de prueba
-          <br> Relleno de prueba
-          <br> Relleno de prueba
-  - **Runtime Pipeline Sketch:**
-          <br> Relleno de prueba
-          <br> Relleno de prueba
-          <br> Relleno de prueba
+  - **See the sketches in the Assumptions.pdf file**
 
 ## Assumptions
 * **General Pipeline Assumptions:**
