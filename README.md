@@ -2,9 +2,9 @@
 
 This is a university project for Advanced Databases. We use PySpark (RDD structure) to create different pipelines that read from PostgreSQL DB and CSV files to create a Decision Tree Classifier.
 
-## Authors
-* **Miquel Palet López**
-* **Gonzalo Córdova Pou**
+## Main library
+- [pyspark](https://spark.apache.org/docs/latest/api/python/index.html)
+  - [pyspark.mllib Machine Learning Library (MLlib)](https://spark.apache.org/docs/latest/ml-guide.html) For machine learning models
 
 ## Files
 - _main.py_: Main file from which you can acces to the pipelines. No parameter is needed to execute it.
@@ -29,3 +29,7 @@ This is a university project for Advanced Databases. We use PySpark (RDD structu
     - (impurity='gini', maxDepth=5, maxBins=32) are good hyperparameters for the Decision Tree.
 * **Runtime Pipeline Assumptions:**
     - It is assumed that you have succesfully executed Analysis Pipeline.
+
+## Authors
+* **Miquel Palet López**
+* **Gonzalo Córdova Pou**
