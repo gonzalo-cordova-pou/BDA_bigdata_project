@@ -1,0 +1,5 @@
+#   Jupyter checkpoints
+*.ipynb_checkpoints/*
+
+#   Pycache
+__pycache__/
