@@ -14,7 +14,7 @@ This is a university project for Advanced Databases. We use PySpark (RDD structu
 - _runtime.py_: Runtime pipeline. Execute _main.py_ and later select option 'management'.
 
 ## Sketches
-  - **See the sketches in the Assumptions.pdf file**
+  - **See the sketches in the [Assumptions.pdf](./Assumptions.pdf) file**
 
 ## Assumptions
 * **General Pipeline Assumptions:**
